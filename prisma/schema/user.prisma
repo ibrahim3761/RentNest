@@ -11,6 +11,7 @@ model User {
 
   properties Property[]
   rentalRequests RentalRequest[]
+  payments Payment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
