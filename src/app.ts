@@ -4,6 +4,7 @@ import cors from "cors";
 import config from "./config";
 import { authRoutes } from "./modules/auth/auth.route";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler";
+import { categoriesRoutes } from "./modules/categoris/categories.route";
 const app: Application = express();
 
 app.use(
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes); 
+app.use("/api/categories", categoriesRoutes); 
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
