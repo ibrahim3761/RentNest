@@ -5,7 +5,7 @@ import config from "../../config/index.js";
 import { SignOptions } from "jsonwebtoken";
 import { jwtUtils } from "../../utility/jwt.js";
 import { AppError } from "../../errors/AppError";
-import { RegisterUserPayload } from "./auth.interface.js";
+import { RegisterUserPayload, UpdateProfilePayload } from "./auth.interface.js";
 
 const registerUser = async (payload: RegisterUserPayload) => {
   const { name, email, password, role, phone, address, avatarUrl } = payload;
@@ -36,7 +36,7 @@ const registerUser = async (payload: RegisterUserPayload) => {
     data: {
       name,
       email,
-      password : hashed,
+      password: hashed,
       status: "ACTIVE",
       role: (role as "TENANT" | "LANDLORD") ?? "TENANT",
       phone,
@@ -95,17 +95,49 @@ const loginUser = async (body: { email: string; password: string }) => {
 const getMe = async (userId: string) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    omit :{
-        password: true,
-    }
+    omit: {
+      password: true,
+    },
   });
   if (!user) throw new AppError("User not found", 404);
 
   return user;
 };
 
+const updateMe = async (userId: string, payload: UpdateProfilePayload) => {
+  const { name, phone, address, avatarUrl } = payload;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  const updateUser = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      name,
+      phone,
+      address,
+      avatarUrl,
+    },
+    omit: {
+      password: true,
+    },
+  });
+
+  return updateUser
+};
+
 export const authService = {
   registerUser,
   loginUser,
   getMe,
+  updateMe,
 };

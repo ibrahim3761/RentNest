@@ -2,13 +2,14 @@ import type { Request, Response, NextFunction } from "express";
 import { catchAsync } from "../../utility/catchAsync";
 import { authService } from "./auth.service";
 import { sendResponse } from "../../utility/sendResponse";
+import httpStatus from "http-status";
 
 const register = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const payload = req.body;
     const user = await authService.registerUser(payload);
     sendResponse(res, {
-      statusCode: 201,
+      statusCode: httpStatus.CREATED,
       success: true,
       message: "Registration successful",
       data: user,
@@ -34,7 +35,7 @@ const login = catchAsync(
     });
 
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Login successful",
       data: { accessToken, refreshToken },
@@ -47,7 +48,7 @@ const getMe = catchAsync(
     const userId = req.user?.id;
     const user = await authService.getMe(userId as string);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "User fetched",
       data: user,
@@ -55,8 +56,23 @@ const getMe = catchAsync(
   },
 );
 
+const updateMe = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const userId = req.user?.id as string;  
+    const payload = req.body;
+    const updatedUser = await authService.updateMe(userId, payload);
+    sendResponse(res, { 
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User updated successfully",
+      data: updatedUser,
+    });
+  }
+)
+
 export const authController = {
   register,
   login,
   getMe,
+  updateMe
 };

@@ -8,3 +8,11 @@ export interface RegisterUserPayload {
   address?: string;
   avatarUrl?: string;
 }
+
+
+export type UpdateProfilePayload = {
+  name?: string;
+  phone?: string;
+  address?: string;
+  avatarUrl?: string;
+};
