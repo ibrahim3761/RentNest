@@ -6,6 +6,8 @@ import { authRoutes } from "./modules/auth/auth.route";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 import { categoriesRoutes } from "./modules/categoris/categories.route";
 import { propertyRoutes } from "./modules/property/property.route";
+import { landlordRoutes } from "./modules/landlord/landlord.route";
+import { notFound } from "./middlewares/notFound";
 const app: Application = express();
 
 app.use(
@@ -22,11 +24,13 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes); 
 app.use("/api/categories", categoriesRoutes); 
 app.use("/api/properties", propertyRoutes);
+app.use("/api/landlord", landlordRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
+app.use(notFound)
 app.use(globalErrorHandler);
 
 export default app;
