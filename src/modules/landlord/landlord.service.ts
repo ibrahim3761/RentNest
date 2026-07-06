@@ -124,9 +124,19 @@ const updateRentalStatus = async (
     );
   }
 
-  if (request.status !== "PENDING") {
+  if (
+    (payload.status === "APPROVED" || payload.status === "REJECTED") &&
+    request.status !== "PENDING"
+  ) {
     throw new AppError(
       "Only pending requests can be approved or rejected.",
+      httpStatus.BAD_REQUEST,
+    );
+  }
+
+  if (payload.status === "COMPLETED" && request.status !== "ACTIVE") {
+    throw new AppError(
+      "Only active rentals can be marked as completed.",
       httpStatus.BAD_REQUEST,
     );
   }
@@ -155,5 +165,5 @@ export const landlordService = {
   updateProperty,
   deleteProperty,
   getLandlordRequests,
-  updateRentalStatus
+  updateRentalStatus,
 };
