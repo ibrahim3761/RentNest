@@ -55,6 +55,64 @@ const createRentalRequest = async (
   return result;
 };
 
+const getMyRentalRequests = async (tenantId: string) => {
+  const result = await prisma.rentalRequest.findMany({
+    where: {
+      tenantId,
+    },
+    include: {
+      property: {
+        include: {
+          category: true,
+          landlord: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      },
+      payment: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return result;
+};
+
+const getRentalRequestById = async (requestId: string, tenantId: string) => {
+  const result = await prisma.rentalRequest.findUniqueOrThrow({
+    where: {
+      id: requestId,
+    },
+    include: {
+      property: {
+        include: {
+          category: true,
+          landlord: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      },
+      payment: true,
+      review: true,
+    },
+  });
+
+  if (result.tenantId !== tenantId) {
+    throw new AppError(
+      "You are not authorized to view this request.",
+      httpStatus.FORBIDDEN,
+    );
+  }
+
+  return result;
+};
+
 export const rentalService = {
   createRentalRequest,
+  getMyRentalRequests,
+  getRentalRequestById,
 };
