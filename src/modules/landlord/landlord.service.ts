@@ -1,3 +1,4 @@
+import { RentalStatus } from "../../../generated/prisma/enums";
 import { AppError } from "../../errors/AppError";
 import { prisma } from "../../lib/prisma";
 import { ICreateProperty, IUpdateProperty } from "./landlord.interface";
@@ -33,7 +34,10 @@ const updateProperty = async (
   });
 
   if (property.landlordId !== landlordId) {
-    throw new AppError("You are not the owner of this property.", httpStatus.FORBIDDEN);
+    throw new AppError(
+      "You are not the owner of this property.",
+      httpStatus.FORBIDDEN,
+    );
   }
 
   const result = await prisma.property.update({
@@ -61,7 +65,10 @@ const deleteProperty = async (
   });
 
   if (!isAdmin && property.landlordId !== landlordId) {
-    throw new AppError("You are not the owner of this property.", httpStatus.FORBIDDEN);
+    throw new AppError(
+      "You are not the owner of this property.",
+      httpStatus.FORBIDDEN,
+    );
   }
 
   await prisma.property.delete({
@@ -72,8 +79,81 @@ const deleteProperty = async (
   return null;
 };
 
+const getLandlordRequests = async (landlordId: string) => {
+  const result = await prisma.rentalRequest.findMany({
+    where: {
+      property: {
+        landlordId,
+      },
+    },
+    include: {
+      tenant: {
+        omit: {
+          password: true,
+        },
+      },
+      property: {
+        include: { category: true },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return result;
+};
+
+const updateRentalStatus = async (
+  requestId: string,
+  payload: { status: RentalStatus },
+  landlordId: string,
+) => {
+  const request = await prisma.rentalRequest.findUniqueOrThrow({
+    where: {
+      id: requestId,
+    },
+    include: {
+      property: true,
+    },
+  });
+
+  if (request.property.landlordId !== landlordId) {
+    throw new AppError(
+      "You are not the owner of this property.",
+      httpStatus.FORBIDDEN,
+    );
+  }
+
+  if (request.status !== "PENDING") {
+    throw new AppError(
+      "Only pending requests can be approved or rejected.",
+      httpStatus.BAD_REQUEST,
+    );
+  }
+
+  const result = await prisma.rentalRequest.update({
+    where: {
+      id: requestId,
+    },
+    data: {
+      status: payload.status,
+    },
+    include: {
+      tenant: {
+        omit: {
+          password: true,
+        },
+      },
+      property: true,
+    },
+  });
+  return result;
+};
+
 export const landlordService = {
   createProperty,
   updateProperty,
   deleteProperty,
+  getLandlordRequests,
+  updateRentalStatus
 };
