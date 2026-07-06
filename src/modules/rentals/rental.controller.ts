@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utility/catchAsync";
 import { sendResponse } from "../../utility/sendResponse";
 import httpStatus from "http-status";
-import { rentalService } from "./rental.servic";
+import { rentalService } from "./rental.service";
 import { AppError } from "../../errors/AppError";
 
 const createRentalRequest = catchAsync(
