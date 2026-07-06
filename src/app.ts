@@ -5,6 +5,7 @@ import config from "./config";
 import { authRoutes } from "./modules/auth/auth.route";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 import { categoriesRoutes } from "./modules/categoris/categories.route";
+import { propertyRoutes } from "./modules/property/property.route";
 const app: Application = express();
 
 app.use(
@@ -20,6 +21,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes); 
 app.use("/api/categories", categoriesRoutes); 
+app.use("/api/properties", propertyRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");

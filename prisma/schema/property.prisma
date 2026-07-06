@@ -8,7 +8,6 @@ model Property {
     bedrooms    Int      @default(1)
     bathrooms   Int      @default(1)
     area        Float?
-    amenities   String[]
     images      String[] @default([])
     isAvailable Boolean  @default(true)
 
