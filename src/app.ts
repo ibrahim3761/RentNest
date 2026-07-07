@@ -11,6 +11,7 @@ import { notFound } from "./middlewares/notFound";
 import { rentalsRoutes } from "./modules/rentals/rentals.route";
 import { reviewsRoutes } from "./modules/reviews/reviews.route";
 import { adminRoutes } from "./modules/admin/admin.route";
+import { paymentRoutes } from "./modules/payments/payment.route";
 const app: Application = express();
 
 app.use(
@@ -19,6 +20,8 @@ app.use(
     credentials: true,
   }),
 );
+
+app.use("/api/payments/confirm", express.raw({ type: "application/json" }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -31,6 +34,7 @@ app.use("/api/landlord", landlordRoutes);
 app.use("/api/rentals", rentalsRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/payments", paymentRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");

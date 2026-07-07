@@ -6,6 +6,7 @@ import { SignOptions } from "jsonwebtoken";
 import { jwtUtils } from "../../utility/jwt.js";
 import { AppError } from "../../errors/AppError";
 import { RegisterUserPayload, UpdateProfilePayload } from "./auth.interface.js";
+import httpStatus from "http-status";
 
 const registerUser = async (payload: RegisterUserPayload) => {
   const { name, email, password, role, phone, address, avatarUrl } = payload;
@@ -100,7 +101,7 @@ const refreshToken = async (refreshToken: string) => {
   );
 
   if (!verifiedRefreshToken.success) {
-    throw new Error(verifiedRefreshToken.error);
+    throw new AppError(verifiedRefreshToken.error, httpStatus.UNAUTHORIZED);
   }
 
   const { id } = verifiedRefreshToken.data as JwtPayload;
@@ -112,7 +113,7 @@ const refreshToken = async (refreshToken: string) => {
   });
 
   if (user.status === "BANNED") {
-    throw new Error("User is banned");
+    throw new AppError("User is banned", httpStatus.FORBIDDEN);
   }
 
   const jwtPayload = {
