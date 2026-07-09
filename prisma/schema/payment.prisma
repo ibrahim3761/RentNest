@@ -7,7 +7,7 @@ model Payment {
     paidAt        DateTime?
 
     rentalRequestId String        @unique
-    rentalRequest   RentalRequest @relation(fields: [rentalRequestId], references: [id])
+    rentalRequest   RentalRequest @relation(fields: [rentalRequestId], references: [id], onDelete: Cascade)
 
     tenantId String
     tenant   User   @relation(fields: [tenantId], references: [id])

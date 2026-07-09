@@ -12,7 +12,7 @@ model Property {
     isAvailable Boolean  @default(true)
 
     landlordId String
-    landlord   User   @relation(fields: [landlordId], references: [id])
+    landlord   User   @relation(fields: [landlordId], references: [id], onDelete: Cascade)
 
     categoryId String
     category   Category @relation(fields: [categoryId], references: [id])
