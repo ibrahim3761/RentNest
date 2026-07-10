@@ -285,5 +285,4 @@ CVC         : Any 3 digits
 ## 🌱 Seed Data
 
 Running `npm run db:seed` creates:
-- Admin user (`admin@rentnest.com` / `Admin@123`)
 - 7 default categories: Apartment, House, Studio, Villa, Room, Office, Duplex
